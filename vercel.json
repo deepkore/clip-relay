@@ -1,0 +1,44 @@
+{
+  "framework": null,
+  "outputDirectory": "public",
+  "functions": {
+    "api/relay.js": {
+      "maxDuration": 60
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/v1/cron/schedule",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/v1/cron/publish",
+      "schedule": "0 18 * * *"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/v1/:path*",
+      "destination": "/api/relay?route=:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        }
+      ]
+    }
+  ]
+}

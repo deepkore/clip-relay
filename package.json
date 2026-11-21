@@ -1,0 +1,25 @@
+{
+  "name": "cliprelay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env dev.js",
+    "test": "node --experimental-test-module-mocks --test",
+    "db:setup": "node --env-file=.env scripts/setup-database.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1163.0",
+    "@aws-sdk/s3-request-presigner": "^3.1163.0",
+    "google-auth-library": "^11.3.4",
+    "googleapis": "^190.0.0",
+    "mp4box": "^2.5.0",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.0"
+  }
+}

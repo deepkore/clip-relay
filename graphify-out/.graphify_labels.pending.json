@@ -1,0 +1,14 @@
+{
+  "0": "home.js",
+  "1": "relay.js",
+  "2": "app.js",
+  "3": "relay.test.js",
+  "4": "package.json",
+  "5": "youtube-publish.js",
+  "6": "home-worker/package.json",
+  "7": "database.js",
+  "10": "vercel.json",
+  "11": "oauth-complete.js",
+  "12": "home-startup.ps1",
+  "13": "start-home.ps1"
+}
