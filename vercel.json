@@ -8,12 +8,12 @@
   },
   "crons": [
     {
-      "path": "/api/v1/cron/schedule",
-      "schedule": "0 0 * * *"
+      "path": "/api/v1/cron/publish",
+      "schedule": "30 0 * * 1-5"
     },
     {
       "path": "/api/v1/cron/publish",
-      "schedule": "0 18 * * *"
+      "schedule": "30 2 * * 0,6"
     }
   ],
   "rewrites": [

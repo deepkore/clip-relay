@@ -1,8 +1,8 @@
 {
   "api/relay.js": {
-    "mtime": 1795260680.365934,
-    "seen": 1795260735.5999777,
-    "ast_hash": "a07bb86e824c191f50b297913f27a1ba",
+    "mtime": 1795297321.9967196,
+    "seen": 1795297338.8862512,
+    "ast_hash": "5ddd1b3ffe434411af5b4aa18e2ae3c8",
     "semantic_hash": ""
   },
   "dev.js": {
@@ -16,66 +16,6 @@
     "seen": 1795186303.7697124,
     "ast_hash": "15bfceeeb36466e93fee41d29d5b3664",
     "semantic_hash": "15bfceeeb36466e93fee41d29d5b3664"
-  },
-  "home-worker/content-rewards.js": {
-    "mtime": 1795260679.3249855,
-    "seen": 1795260735.6,
-    "ast_hash": "cd5991d6559a5419cb76016bc22dd3be",
-    "semantic_hash": ""
-  },
-  "home-worker/home.js": {
-    "mtime": 1795260679.9130993,
-    "seen": 1795260735.6000042,
-    "ast_hash": "e9abf44763b42d2b6b5a4d92c4d1cca5",
-    "semantic_hash": ""
-  },
-  "home-worker/lib/content-rewards.js": {
-    "mtime": 1793959201.1832771,
-    "seen": 1795186303.7703915,
-    "ast_hash": "39af2a0de2214d5dd1c78338094ec1a0",
-    "semantic_hash": "39af2a0de2214d5dd1c78338094ec1a0"
-  },
-  "home-worker/lib/protocol.js": {
-    "mtime": 1794991149.1968248,
-    "seen": 1795186303.7706313,
-    "ast_hash": "55c976f0f813a1b1653d95526dd5ec13",
-    "semantic_hash": "55c976f0f813a1b1653d95526dd5ec13"
-  },
-  "home-worker/login.js": {
-    "mtime": 1794991149.8666072,
-    "seen": 1795186303.7709131,
-    "ast_hash": "75f2d3e374b3d243c4e0da7d4ab5c189",
-    "semantic_hash": "75f2d3e374b3d243c4e0da7d4ab5c189"
-  },
-  "home-worker/package.json": {
-    "mtime": 1794991149.5254526,
-    "seen": 1795186303.7712026,
-    "ast_hash": "3cd2bf04a52f55631e3b66ecfa7b3a81",
-    "semantic_hash": "3cd2bf04a52f55631e3b66ecfa7b3a81"
-  },
-  "home-worker/scripts/home-startup.ps1": {
-    "mtime": 1794991190.445497,
-    "seen": 1795186303.7714484,
-    "ast_hash": "b2b89797518e7c8d20cd8bddde509eba",
-    "semantic_hash": "b2b89797518e7c8d20cd8bddde509eba"
-  },
-  "home-worker/scripts/start-home.ps1": {
-    "mtime": 1794991190.4484532,
-    "seen": 1795186303.7716854,
-    "ast_hash": "04e6daa206bf7281d62659aa59b2fb54",
-    "semantic_hash": "04e6daa206bf7281d62659aa59b2fb54"
-  },
-  "home-worker/verify-browser.mjs": {
-    "mtime": 1795260710.4816272,
-    "seen": 1795260735.6000376,
-    "ast_hash": "f1e1df1ca9c576d93ad146a15f3dbfb2",
-    "semantic_hash": ""
-  },
-  "home-worker/verify-webhook.mjs": {
-    "mtime": 1795249270.763685,
-    "seen": 1795249301.8223646,
-    "ast_hash": "bbdf0fbf9bed34e0507f13ebc0360bef",
-    "semantic_hash": ""
   },
   "lib/auth.js": {
     "mtime": 1795175942.4501107,
@@ -198,8 +138,8 @@
     "semantic_hash": "6401a36ad14c58a1c4861bfcc840af84"
   },
   "public/publishing.js": {
-    "mtime": 1795272104.7644348,
-    "seen": 1795272186.2237153,
+    "mtime": 1795272215.989198,
+    "seen": 1795297246.4858994,
     "ast_hash": "39893036f52064f6c1b104416046ec96",
     "semantic_hash": ""
   },
@@ -258,9 +198,9 @@
     "semantic_hash": ""
   },
   "vercel.json": {
-    "mtime": 1795260285.600721,
-    "seen": 1795260735.6001866,
-    "ast_hash": "c3bcbd096cf39eeed57e32989808415e",
+    "mtime": 1795297153.1078284,
+    "seen": 1795297246.4859173,
+    "ast_hash": "256c09aee25d844b51b5961878029edc",
     "semantic_hash": ""
   },
   ".codex/hooks.json": {
@@ -282,15 +222,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1795249270.7686844,
-    "seen": 1795249301.8224225,
-    "ast_hash": "423704b3a517071a731274e3c4f57bd2",
-    "semantic_hash": ""
-  },
-  "home-worker/README.md": {
-    "mtime": 1795249270.765682,
-    "seen": 1795249301.8224237,
-    "ast_hash": "8f15a082537df6c1da03a8aa29b05783",
+    "mtime": 1795274740.773248,
+    "seen": 1795297246.4859226,
+    "ast_hash": "272f3292ebb061082dfd7045a1e2b35e",
     "semantic_hash": ""
   },
   "public/index.html": {
@@ -303,12 +237,6 @@
     "mtime": 1795001152.7151678,
     "seen": 1795193739.7243881,
     "ast_hash": "1e637d6dfe6c0adfffbc70111176b034",
-    "semantic_hash": ""
-  },
-  "home-worker/package-lock.json": {
-    "mtime": 1794991320.0601916,
-    "seen": 1795193739.7243896,
-    "ast_hash": "e6b21c0c7171112c7d9b08b7696f27d7",
     "semantic_hash": ""
   },
   "package-lock.json": {

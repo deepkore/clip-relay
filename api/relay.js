@@ -40,7 +40,7 @@ function targetView(job,d) {
   if(!d.done && !d.error && d.videoId){
     status=(d.uploadConfirmed || ['uploaded','processed'].includes(d.uploadStatus))?'Uploaded':'Processing on YouTube';
   }
-  if(!d.done && !d.error && !d.videoId && job.scheduledAt && new Date(job.scheduledAt) > new Date()){
+  if(!d.done && !d.error && !d.videoId && job.scheduledAt){
     status='Scheduled';
   }
   if(d.done && submissions.length){
@@ -140,7 +140,7 @@ async function run(req,res){
             (t.publishedAt?t.publishedAt.slice(0,10)===today:(j.created && j.created.slice(0,10)===today)));
         });
         if(alreadyPublished)continue;
-        const alreadyScheduled=cJobs.some(j=>j.scheduledAt && j.scheduledAt.slice(0,10)===today && !Object.values(j.targets || {}).some(t=>t.done));
+        const alreadyScheduled=cJobs.some(j=>j.scheduledAt && !Object.values(j.targets || {}).some(t=>t.done));
         if(alreadyScheduled)continue;
         const candidates=cJobs.filter(j=>{
           const targets=Object.values(j.targets || {});
@@ -149,10 +149,19 @@ async function run(req,res){
         if(!candidates.length)continue;
         candidates.sort((a,b)=>(a.created || '').localeCompare(b.created || ''));
         const picked=candidates[0];
-        const publishTimeStr=process.env.PUBLISH_TIME || '18:00';
-        const [h,m]=publishTimeStr.split(':').map(Number);
         const targetDate=new Date();
-        targetDate.setUTCHours(isNaN(h)?18:h,isNaN(m)?0:m,0,0);
+        const isWeekend=targetDate.getUTCDay()===0 || targetDate.getUTCDay()===6;
+        const defaultTime=isWeekend?'02:30':'00:30';
+        const publishTimeStr=process.env.PUBLISH_TIME || defaultTime;
+        const [h,m]=publishTimeStr.split(':').map(Number);
+        targetDate.setUTCHours(isNaN(h)?(isWeekend?2:0):h,isNaN(m)?30:m,0,0);
+        if(targetDate <= new Date()){
+          targetDate.setUTCDate(targetDate.getUTCDate() + 1);
+          const nextWeekend=targetDate.getUTCDay()===0 || targetDate.getUTCDay()===6;
+          if(!process.env.PUBLISH_TIME){
+            targetDate.setUTCHours(nextWeekend?2:0,30,0,0);
+          }
+        }
         const jobPath='jobs/'+picked.id;
         const current=await read(jobPath);
         current.value.scheduledAt=targetDate.toISOString();
