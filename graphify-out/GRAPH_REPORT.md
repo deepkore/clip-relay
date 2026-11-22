@@ -1,17 +1,17 @@
-# Graph Report - ClippingPostingSoftware  (2026-11-22)
+# Graph Report - ClippingPostingSoftware  (2026-11-23)
 
 ## Corpus Check
-- 35 files · ~13,105 words
+- 35 files · ~13,150 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 4 file(s) not represented in the graph (top: .graphify-bak 1, .example 1, (none) 1)
 
 ## Summary
-- 211 nodes · 548 edges · 11 communities (10 shown, 1 thin omitted)
+- 211 nodes · 550 edges · 11 communities (10 shown, 1 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `cb5f0800`
+- Built from commit: `6a33ae08`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -29,7 +29,7 @@
 - oauth-complete.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `run()` - 40 edges
+1. `run()` - 41 edges
 2. `fail()` - 36 edges
 3. `read()` - 17 edges
 4. `save()` - 17 edges
@@ -110,7 +110,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `reward-profiles.test.js` be split into smaller, more focused modules?**
   _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
 - **Why does `fail()` connect `youtube-publish.js` to `auth.js`, `relay.js`, `read`?**
-  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
 - **Should `app.js` be split into smaller, more focused modules?**
   _Cohesion score 0.13368983957219252 - nodes in this community are weakly interconnected._
 - **Why does `google-auth-library` connect `package.json` to `youtube-publish.js`?**

@@ -66,7 +66,17 @@ async function run(req,res){
     const invalid=[];
     if(process.env.ADMIN_TOKEN && process.env.ADMIN_TOKEN.length<24) invalid.push('ADMIN_TOKEN must have at least 24 characters');
     if(process.env.ENCRYPTION_KEY && !/^[a-f0-9]{64}$/i.test(process.env.ENCRYPTION_KEY)) invalid.push('ENCRYPTION_KEY must be 64 hexadecimal characters');
-    return {configured:ready(),missing,invalid,storage:'postgres'};
+    let dbStatus = 'untested';
+    if(process.env.DATABASE_URL){
+      try {
+        const {databasePool} = await import('../lib/database.js');
+        await databasePool().query('SELECT 1');
+        dbStatus = 'connected';
+      } catch(err) {
+        dbStatus = 'error: ' + (err.code || err.message);
+      }
+    }
+    return {configured:ready(),missing,invalid,storage:'postgres',database:dbStatus};
   }
   if(!ready()) throw fail(503,'Set the workspace environment variables to enable live operations.');
   if(group==='oauth' && id==='youtube' && action==='callback' && method==='GET'){
@@ -172,8 +182,9 @@ async function run(req,res){
     }
     if(id==='publish' && (method==='GET' || method==='POST')){
       const now=new Date();
+      const force=url.searchParams.get('force')==='true' || url.searchParams.get('now')==='true' || Boolean(body?.force || body?.now);
       let jobs=await list('jobs');
-      let dueJobs=jobs.filter(j=>j.scheduledAt && new Date(j.scheduledAt)<=now && Object.values(j.targets || {}).some(t=>!t.done));
+      let dueJobs=jobs.filter(j=>j.scheduledAt && (force || new Date(j.scheduledAt)<=now) && Object.values(j.targets || {}).some(t=>!t.done));
       if(!dueJobs.length){
         const campaignMap=new Map();
         for(const job of jobs){
@@ -183,7 +194,7 @@ async function run(req,res){
         }
         for(const [,cJobs] of campaignMap.entries()){
           const alreadyPublished=cJobs.some(j=>Object.values(j.targets || {}).some(t=>(t.done || t.url || ['Published','Delivered','Awaiting submission','Check submission'].includes(t.status)) && (t.publishedAt?t.publishedAt.slice(0,10)===today:(j.created && j.created.slice(0,10)===today))));
-          if(alreadyPublished)continue;
+          if(alreadyPublished && !force)continue;
           const candidates=cJobs.filter(j=>(j.bytes || j.uploadId) && Object.values(j.targets || {}).some(t=>!t.done && !t.error));
           if(!candidates.length)continue;
           candidates.sort((a,b)=>(a.created || '').localeCompare(b.created || ''));
@@ -488,6 +499,8 @@ export default async function handler(req,res){
         status,
         error:identifier(e.name),
         code:identifier(e.code || e.cause?.code),
+        hostname:identifier(e.hostname || e.cause?.hostname),
+        syscall:identifier(e.syscall),
         providerStatus:e.$metadata?.httpStatusCode,
         providerRequestId:identifier(e.$metadata?.requestId)
       });
