@@ -1,7 +1,7 @@
 # Graph Report - ClippingPostingSoftware  (2026-11-23)
 
 ## Corpus Check
-- 35 files · ~13,150 words
+- 35 files · ~14,708 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 4 file(s) not represented in the graph (top: .graphify-bak 1, .example 1, (none) 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6a33ae08`
+- Built from commit: `721d8168`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -59,7 +59,7 @@
 
 ### Community 0 - "reward-profiles.test.js"
 Cohesion: 0.14
-Nodes (3): handler(), files, [channel, file, title, caption='',...campaignUrls]
+Nodes (3): handler(), files, [channel, file, thumbnailFileArg, campaignNameArg, title, captionArg]
 
 ### Community 1 - "relay.js"
 Cohesion: 0.15

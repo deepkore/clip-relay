@@ -50,10 +50,10 @@ test('channel isolation, idempotent uploads, Reel processing and campaign retry'
  const key=(await call('channels/podpulse/key',admin,{})).data.key;
  assert.equal((await call('overview',key)).code,403);
  const id=randomUUID();
- const payload={channel:'podpulse',title:'Hello',platforms:['instagram']};
+ const payload={channel:'podpulse',title:'Hello',caption:'PodPulse caption',hookText:'Hook teaser',description:'Full description',instagramDescription:'Instagram reel description',youtubeDescription:'YouTube shorts description',campaignName:'camp-1',videoFileName:'clip.mp4',thumbnailFileName:'cover.jpg',platforms:['instagram']};
  assert.equal((await call('videos',key,{...payload,channel:'other'},id)).code,403);
  const job=await call('videos',key,payload,id);
- assert.equal(job.data.objectKey,'podpulse/camp-1/'+id+'.mp4');
+ assert.equal(job.data.objectKey,'podpulse/camp-1/clip.mp4');
  assert.equal((await call('videos',key,payload,id)).data.id,id);
  assert.equal((await call('videos',key,{...payload,title:'Different'},id)).code,409);
  let published=0,deliveries=0;
@@ -136,11 +136,11 @@ test('new videos select one campaign while legacy multi-campaign jobs retain the
  assert.deepEqual(created.data.campaignUrls,urls);
  records.get('channels/'+channel).value.youtubeChannelId='UCvariety';
  const id=randomUUID();
- const payload={channel,title:'Selected clip'};
+ const payload={channel,title:'Selected clip',caption:'Caption',hookText:'Hook',description:'Desc',instagramDescription:'Insta',youtubeDescription:'YT',videoFileName:'clip.mp4',thumbnailFileName:'cover.jpg'};
  assert.equal((await call('videos',admin,payload,id)).code,400);
  const selected=urls.slice(0,2);
  assert.equal((await call('videos',admin,{...payload,campaignUrls:selected},id)).code,400);
- const upload={...payload,campaignUrl:urls[0]};
+ const upload={...payload,campaignName:'music',campaignUrl:urls[0]};
  assert.equal((await call('videos',admin,{...upload,campaignUrls:[urls[0]]},id)).code,400);
  assert.equal((await call('videos',admin,upload,id)).code,200);
  await call('channels/'+channel,admin,{campaignUrls:[urls[2]]});
@@ -384,7 +384,7 @@ test('video and thumbnail uploads retain a database log and verify both R2 objec
  const admin=process.env.ADMIN_TOKEN;
  await call('channels',admin,{slug:'upload-test',name:'Upload Test',instagram:'token',instagramId:'123',rewardAccountId:'test-account',campaigns:[{name:'Summer Campaign',url:'https://contentrewards.com/c/campaigns/summer'}]});
  const key=(await call('channels/upload-test/key',admin,{})).data.key;
- const id=randomUUID(),payload={channel:'upload-test',title:'Clip',hookText:'Watch this moment',description:'A description of the clip.',instagramDescription:'Instagram caption',youtubeDescription:'YouTube description',campaignName:'Summer Campaign',videoFileName:'clip.mp4',thumbnailFileName:'cover.jpg',platforms:['instagram']};
+ const id=randomUUID(),payload={channel:'upload-test',title:'Clip',caption:'Caption text',hookText:'Watch this moment',description:'A description of the clip.',instagramDescription:'Instagram caption',youtubeDescription:'YouTube description',campaignName:'Summer Campaign',videoFileName:'clip.mp4',thumbnailFileName:'cover.jpg',platforms:['instagram']};
  const created=await call('videos',key,payload,id);
  assert.equal(created.code,200);
  const job=created.data;
@@ -455,11 +455,11 @@ test('campaign names resolve one URL and retain the original mapping on retry',a
  const second={name:'Winter Launch',url:'https://contentrewards.com/c/campaigns/winter'};
  const created=await call('channels',admin,{slug:channel,name:'Named',instagram:'token',instagramId:'123',rewardAccountId:'test-account',campaigns:[first,second]});
  assert.equal(created.code,200);assert.deepEqual(created.data.campaigns,[first,second]);
- const payload={channel,title:'Named clip',campaignName:'summer launch'};
+ const payload={channel,title:'Named clip',campaignName:'summer launch',caption:'Caption',hookText:'Hook',description:'Desc',instagramDescription:'Insta',youtubeDescription:'YT',videoFileName:'clip.mp4',thumbnailFileName:'cover.jpg'};
  const id=randomUUID(),job=await call('videos',admin,payload,id);
  assert.equal(job.code,200);assert.equal(job.data.campaignUrl,first.url);
  assert.equal(job.data.campaignName,first.name);
- assert.equal(job.data.objectKey,channel+'/Summer Launch/'+id+'.mp4');
+ assert.equal(job.data.objectKey,channel+'/Summer Launch/clip.mp4');
  assert.equal((await call('videos',admin,{...payload,campaignName:'Unknown'},randomUUID())).code,400);
  assert.equal((await call('videos',admin,{...payload,campaignUrl:second.url},randomUUID())).code,400);
  assert.equal((await call('videos',admin,{...payload,campaignName:'Winter Launch'},id)).code,409);
@@ -468,7 +468,7 @@ test('campaign names resolve one URL and retain the original mapping on retry',a
  assert.equal((await call('channels/'+channel,admin,{campaigns:[{...first,name:'../bad'}]})).code,400);
  await call('channels/'+channel,admin,{campaigns:[{...first,url:'https://contentrewards.com/c/campaigns/replaced'},second]});
  assert.equal((await call('videos',admin,payload,id)).data.campaignUrl,first.url);
- assert.equal((await call('videos',admin,payload,randomUUID())).data.campaignUrl,'https://contentrewards.com/c/campaigns/replaced');
+ assert.equal((await call('videos',admin,{...payload,videoFileName:'clip2.mp4',thumbnailFileName:'cover2.jpg'},randomUUID())).data.campaignUrl,'https://contentrewards.com/c/campaigns/replaced');
 });
 
 test('targetView sets Uploaded only upon API confirmation and never on error',async()=>{
@@ -540,4 +540,32 @@ test('cron scheduler selects 1 video per campaign FIFO, and cron publisher execu
  // 4. Running cron/schedule again finds no pending jobs for summer-campaign today
  const schedRes3=await call('cron/schedule',admin);
  assert.equal(schedRes3.data.scheduled.filter(s=>s.campaign==='summer-campaign').length,0);
+});
+
+test('POST /api/v1/videos strictly requires all 10 fields',async()=>{
+ const admin=process.env.ADMIN_TOKEN;
+ const channel='req-fields-test';
+ await call('channels',admin,{slug:channel,name:'Req Test',rewardAccountId:'test-account',instagram:'token',instagramId:'123',campaigns:[{name:'Main Camp',url:'https://contentrewards.com/c/campaigns/main'}]});
+ const valid={
+   channel,
+   title:'Valid Title',
+   campaignName:'Main Camp',
+   videoFileName:'clip.mp4',
+   thumbnailFileName:'cover.jpg',
+   caption:'Valid caption',
+   description:'Valid description',
+   hookText:'Valid hook',
+   youtubeDescription:'Valid YT description',
+   instagramDescription:'Valid IG description',
+   platforms:['instagram']
+ };
+ const fields=['channel','title','campaignName','videoFileName','thumbnailFileName','caption','description','hookText','youtubeDescription','instagramDescription'];
+ for(const field of fields){
+   const invalid={...valid};
+   delete invalid[field];
+   const res=await call('videos',admin,invalid,randomUUID());
+   assert.equal(res.code,400,`Missing field ${field} must return 400`);
+ }
+ const ok=await call('videos',admin,valid,randomUUID());
+ assert.equal(ok.code,200);
 });

@@ -3,11 +3,18 @@ import { randomUUID } from 'node:crypto';
 import {basename} from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-const [channel, file, title, caption='',...campaignUrls]=process.argv.slice(2);
-if(campaignUrls.length>1)throw Error('Provide only one campaign URL per video.');
+const [channel, file, thumbnailFileArg, campaignNameArg, title, captionArg]=process.argv.slice(2);
 const {RELAY_URL,RELAY_KEY}=process.env;
-if(!channel || !file || !title || !RELAY_URL || !RELAY_KEY) {
-  throw Error('Set RELAY_URL and RELAY_KEY, then run node examples/post-video.js <channel> <file.mp4> "<title>" ["caption"].');
+const thumbnailFile=thumbnailFileArg || process.env.THUMBNAIL_FILE;
+const campaignName=campaignNameArg || process.env.CAMPAIGN_NAME;
+const caption=captionArg || process.env.CAPTION || '';
+const hookText=process.env.HOOK_TEXT || title || '';
+const description=process.env.VIDEO_DESCRIPTION || caption || '';
+const instagramDescription=process.env.INSTAGRAM_DESCRIPTION || caption || '';
+const youtubeDescription=process.env.YOUTUBE_DESCRIPTION || description || caption || '';
+
+if(!channel || !file || !thumbnailFile || !campaignName || !title || !caption || !RELAY_URL || !RELAY_KEY) {
+  throw Error('Set RELAY_URL and RELAY_KEY, then run:\nnode examples/post-video.js <channel> <file.mp4> <thumb.jpg> <campaignName> "<title>" "<caption>"\nOr supply them via THUMBNAIL_FILE, CAMPAIGN_NAME, CAPTION, HOOK_TEXT, VIDEO_DESCRIPTION, INSTAGRAM_DESCRIPTION, YOUTUBE_DESCRIPTION environment variables.');
 }
 const id=process.env.VIDEO_REQUEST_ID || randomUUID();
 console.log('Request ID:',id,'— reuse as VIDEO_REQUEST_ID to resume this video.');
@@ -19,12 +26,20 @@ async function call(path,body) {
 }
 const video=await openAsBlob(file,{type:'video/mp4'});
 if(!video.size || video.size>1024**3) throw Error('Provide an MP4 between 1 byte and 1 GiB.');
-const thumbnailFile=process.env.THUMBNAIL_FILE;
-const campaignName=process.env.CAMPAIGN_NAME;
-if(thumbnailFile && !campaignName)throw Error('Set CAMPAIGN_NAME when supplying THUMBNAIL_FILE.');
-const thumbnail=thumbnailFile?await openAsBlob(thumbnailFile,{type:'image/jpeg'}):null;
-if(thumbnail && (!thumbnail.size || thumbnail.size>10*1024**2))throw Error('Provide a JPG between 1 byte and 10 MiB.');
-const job=await call('videos',{channel,title,caption,hookText:process.env.HOOK_TEXT || '',description:process.env.VIDEO_DESCRIPTION || '',instagramDescription:process.env.INSTAGRAM_DESCRIPTION || '',youtubeDescription:process.env.YOUTUBE_DESCRIPTION || '',...(campaignUrls.length?{campaignUrl:campaignUrls[0]}:{}),...(campaignName?{campaignName,videoFileName:basename(file),...(thumbnailFile?{thumbnailFileName:basename(thumbnailFile)}:{})}:{})});
+const thumbnail=await openAsBlob(thumbnailFile,{type:'image/jpeg'});
+if(!thumbnail.size || thumbnail.size>10*1024**2)throw Error('Provide a JPG between 1 byte and 10 MiB.');
+const job=await call('videos',{
+  channel,
+  title,
+  caption,
+  hookText,
+  description,
+  instagramDescription,
+  youtubeDescription,
+  campaignName,
+  videoFileName:basename(file),
+  thumbnailFileName:basename(thumbnailFile)
+});
 console.log('Database upload ID:',job.uploadId);
 const put=await fetch(job.uploadUrl,{method:'PUT',headers:job.headers,body:video});
 if(!put.ok && put.status!==412) throw Error('R2 upload returned HTTP '+put.status);

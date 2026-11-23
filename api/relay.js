@@ -319,17 +319,24 @@ async function run(req,res){
   }
   if(group==='videos' && !id && method==='POST'){
     const channel=body.channel;
-    if(!slugPattern.test(channel || '')) throw fail(400,'Provide a channel folder.');
+    if(!channel || typeof channel!=='string' || !channel.trim()) throw fail(400,'channel is required.');
+    if(!slugPattern.test(channel)) throw fail(400,'Provide a channel folder.');
     if(scope && channel!==scope) throw fail(403,'Key belongs to another channel.');
     const c=(await read('channels/'+channel)).value;
+    if(!body.title || typeof body.title!=='string' || !body.title.trim()) throw fail(400,'title is required.');
     const title=string(body.title,100,'video title');
-    const caption=string(body.caption || '',2200,'caption');
-    const hookText=string(body.hookText ?? '',500,'hookText');
-    const description=string(body.description ?? '',5000,'description');
-    const instagramDescription=string(body.instagramDescription ?? '',2200,'instagramDescription');
-    const youtubeDescription=string(body.youtubeDescription ?? '',5000,'youtubeDescription');
+    if(!body.caption || typeof body.caption!=='string' || !body.caption.trim()) throw fail(400,'caption is required.');
+    const caption=string(body.caption,2200,'caption');
+    if(!body.hookText || typeof body.hookText!=='string' || !body.hookText.trim()) throw fail(400,'hookText is required.');
+    const hookText=string(body.hookText,500,'hookText');
+    if(!body.description || typeof body.description!=='string' || !body.description.trim()) throw fail(400,'description is required.');
+    const description=string(body.description,5000,'description');
+    if(!body.instagramDescription || typeof body.instagramDescription!=='string' || !body.instagramDescription.trim()) throw fail(400,'instagramDescription is required.');
+    const instagramDescription=string(body.instagramDescription,2200,'instagramDescription');
+    if(!body.youtubeDescription || typeof body.youtubeDescription!=='string' || !body.youtubeDescription.trim()) throw fail(400,'youtubeDescription is required.');
+    const youtubeDescription=string(body.youtubeDescription,5000,'youtubeDescription');
     const targets=body.platforms ?? platforms.filter(p=>c[p]);
-    if(!title || !Array.isArray(targets) || !targets.length || targets.some(p=>!platforms.includes(p) || !c[p])) throw fail(400,'Provide a title and at least one connected platform.');
+    if(!Array.isArray(targets) || !targets.length || targets.some(p=>!platforms.includes(p) || !c[p])) throw fail(400,'Provide a title and at least one connected platform.');
     const jobId=req.headers['idempotency-key'] ?? randomUUID();
     if(!uuid.test(jobId)) throw fail(400,'Idempotency-Key must be a lowercase UUID.');
     const names=uploadNames(body);
@@ -348,20 +355,21 @@ async function run(req,res){
     catch(e){if(e.status!==404) throw e;}
     if(!job){
       const configured=channelCampaigns(c);
-      const selected=names?.campaignName?configured.find(item=>item.name.toLowerCase()===names.campaignName.toLowerCase()):undefined;
-      if(names?.campaignName && !selected)throw fail(400,'Unknown campaignName. Choose a named campaign configured on this channel.');
-      if(selected && requested && (requested.length!==1 || requested[0]!==selected.url))throw fail(400,'campaignName and campaignUrl do not match.');
+      const matchesCampaign=c.campaign && names.campaignName.toLowerCase()===c.campaign.toLowerCase();
+      const selected=configured.find(item=>item.name.toLowerCase()===names.campaignName.toLowerCase()) || (matchesCampaign?{name:c.campaign}:undefined);
+      if(!selected && (configured.length || c.campaign))throw fail(400,'Unknown campaignName. Choose a named campaign configured on this channel.');
+      if(selected?.url && requested && (requested.length!==1 || requested[0]!==selected.url))throw fail(400,'campaignName and campaignUrl do not match.');
       const available=campaignList(c);
       if(!selected && !requested && available.length>1) throw fail(400,'Select a campaignName configured on this channel.');
-      const campaignUrls=selected?[selected.url]:requested ?? available;
+      const campaignUrls=selected?.url?[selected.url]:requested ?? available;
       if(campaignUrls.some(url=>!available.includes(url))) throw fail(400,'Choose campaigns associated with this channel.');
       if(campaignUrls.length){
         await rewardAccount(c.rewardAccountId);
         if(targets.includes('youtube'))await bindYouTube(c.youtubeChannelId,c.rewardAccountId);
       }
       const campaignName=selected?.name || configured.find(item=>item.url===campaignUrls[0])?.name || (campaignUrls.length===1?new URL(campaignUrls[0]).pathname.split('/').filter(Boolean).at(-1):c.campaign?.replace(/[^a-zA-Z0-9_-]/g,'-') || 'uncategorized');
-      const videoFileName=names?.videoFileName || jobId+'.mp4';
-      const thumbnailFileName=names?.thumbnailFileName;
+      const videoFileName=names.videoFileName;
+      const thumbnailFileName=names.thumbnailFileName;
       const key=channel+'/'+campaignName+'/'+videoFileName;
       const thumbnailKey=thumbnailFileName?channel+'/'+campaignName+'/'+thumbnailFileName:undefined;
       const uploadId=await createUploadLog({requestId:jobId,channel,campaignName,videoKey:key,thumbnailKey,hookText,description,instagramDescription,youtubeDescription});

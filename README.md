@@ -184,6 +184,8 @@ This publishes to all accounts configured on the channel. The script prints a re
 
 ### Agent HTTP contract
 
+See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for the complete endpoint reference, request/response examples, and full JSON body schemas.
+
 Send `Authorization: Bearer <channel key>` to the ClipRelay API. For JSON bodies, send `Content-Type: application/json`.
 
 1. `POST /api/v1/videos` with a stable UUID in `Idempotency-Key` and a JSON body such as `{"channel":"podpulse","title":"Episode highlight","caption":"A moment from the show","platforms":["youtube","instagram"]}`. The response includes `id`, `objectKey`, `uploadUrl`, `headers`, and `platforms`.
@@ -240,9 +242,7 @@ Read the persistent log with `GET /api/v1/uploads/{uploadId}` or `GET /api/v1/vi
 
 Run `npm run db:setup` to add the upload-log table before restarting the API. The example agent supports `CAMPAIGN_NAME` and `THUMBNAIL_FILE` environment variables, uploads both files, verifies completion, then publishes. Keep `VIDEO_REQUEST_ID` unchanged on retries.
 
-`hookText` (up to 500 characters) and `description` (up to 5,000 characters) are optional upload metadata, stored in the upload table and job and returned by creation, video details, and upload-log APIs. Both default to empty strings and must stay identical when retrying an idempotency key. They do not replace the existing publishing `caption`. The example agent reads `HOOK_TEXT` and `VIDEO_DESCRIPTION`.
-
-`instagramDescription` (up to 2,200 characters) and `youtubeDescription` (up to 5,000 characters) are also stored in the upload table and returned by these APIs. Publishing uses the corresponding platform description when nonempty, otherwise the existing caption (and Instagram falls back to the title if both are empty). The generic `description` and `hookText` remain metadata. The example agent accepts `INSTAGRAM_DESCRIPTION` and `YOUTUBE_DESCRIPTION`.
+`hookText` (up to 500 characters), `description` (up to 5,000 characters), `caption` (up to 2,200 characters), `youtubeDescription` (up to 5,000 characters), `instagramDescription` (up to 2,200 characters), `campaignName` (up to 150 characters), `videoFileName` (must end in `.mp4`), and `thumbnailFileName` (must end in `.jpg`) are all strictly required for creating video jobs via `POST /api/v1/videos`. The example agent (`examples/post-video.js`) reads them via CLI arguments and environment variables (`CAMPAIGN_NAME`, `THUMBNAIL_FILE`, `HOOK_TEXT`, `VIDEO_DESCRIPTION`, `INSTAGRAM_DESCRIPTION`, `YOUTUBE_DESCRIPTION`).
 
 New videos select one configured campaign using `campaignName`. A legacy `campaignUrl` string is still accepted, but must match the selected name if both are supplied. Omitting both selects the channel's sole campaign; channels with several campaigns require a selection. A legacy `campaignUrls` array is accepted only with zero or one URL; multiple selections and sending both fields are rejected. Existing multi-campaign jobs remain readable and resumable.
 

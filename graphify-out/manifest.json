@@ -1,8 +1,8 @@
 {
   "api/relay.js": {
-    "mtime": 1795388199.3353357,
-    "seen": 1795388267.515761,
-    "ast_hash": "ea2daeafafabdbcafed53c72209ba240",
+    "mtime": 1795436576.9230783,
+    "seen": 1795436747.4026017,
+    "ast_hash": "7764891b14d2aac21568c5b1774ab379",
     "semantic_hash": ""
   },
   "dev.js": {
@@ -12,10 +12,10 @@
     "semantic_hash": "5cc40d16aec345d3f74a6b348f34478f"
   },
   "examples/post-video.js": {
-    "mtime": 1795011386.0685,
-    "seen": 1795186303.7697124,
-    "ast_hash": "15bfceeeb36466e93fee41d29d5b3664",
-    "semantic_hash": "15bfceeeb36466e93fee41d29d5b3664"
+    "mtime": 1795436606.281635,
+    "seen": 1795436747.4026246,
+    "ast_hash": "335937daab2d2950d47eb20816ff59a2",
+    "semantic_hash": ""
   },
   "lib/auth.js": {
     "mtime": 1795175942.4501107,
@@ -96,10 +96,10 @@
     "semantic_hash": "3a74b1b6e49e881d7eb7af26f5e2ff1f"
   },
   "lib/uploads.js": {
-    "mtime": 1795017666.967124,
-    "seen": 1795186303.7760339,
-    "ast_hash": "dd4ddfac4bbd425160003ac315d244fe",
-    "semantic_hash": "dd4ddfac4bbd425160003ac315d244fe"
+    "mtime": 1795436576.8549,
+    "seen": 1795436747.402706,
+    "ast_hash": "c7f51a170daa0102a2f11af0290e9a16",
+    "semantic_hash": ""
   },
   "lib/worker-protocol.js": {
     "mtime": 1794991191.7336447,
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "public/app.js": {
-    "mtime": 1795272111.610292,
-    "seen": 1795272186.2237058,
-    "ast_hash": "152bdf05fc13d56626f278010173286a",
+    "mtime": 1795436629.191204,
+    "seen": 1795436747.4027338,
+    "ast_hash": "e5ba391eb7424532086f6cdaa9d9238d",
     "semantic_hash": ""
   },
   "public/oauth-complete.js": {
@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "test/relay.test.js": {
-    "mtime": 1795260680.8832262,
-    "seen": 1795260735.6001637,
-    "ast_hash": "0316eea3bf36c89dace16052085c4a25",
+    "mtime": 1795436710.5867813,
+    "seen": 1795436747.4027753,
+    "ast_hash": "d38c219763b6e49e9f4bf7096ae4901d",
     "semantic_hash": ""
   },
   "test/reward-profiles.test.js": {
@@ -222,9 +222,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1795274740.773248,
-    "seen": 1795297246.4859226,
-    "ast_hash": "272f3292ebb061082dfd7045a1e2b35e",
+    "mtime": 1795436664.9215257,
+    "seen": 1795436747.402826,
+    "ast_hash": "8fb383ae7a27c1eac1d2432bd707da1f",
     "semantic_hash": ""
   },
   "public/index.html": {
@@ -237,6 +237,12 @@
     "mtime": 1795001152.7151678,
     "seen": 1795193739.7243881,
     "ast_hash": "1e637d6dfe6c0adfffbc70111176b034",
+    "semantic_hash": ""
+  },
+  "API_DOCUMENTATION.md": {
+    "mtime": 1795436650.731107,
+    "seen": 1795436747.4028146,
+    "ast_hash": "49421555940bb294ab660e47026ad3c1",
     "semantic_hash": ""
   },
   "package-lock.json": {
